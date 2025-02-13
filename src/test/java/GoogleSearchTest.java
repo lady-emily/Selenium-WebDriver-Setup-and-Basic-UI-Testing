@@ -3,25 +3,35 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import java.time.Duration;
 
 public class GoogleSearchTest {
     public static void main(String[] args) {
-        // Automatically download and set up ChromeDriver
+        // Setup WebDriver
         WebDriverManager.chromedriver().setup();
-
-        WebDriver driver = new ChromeDriver(); // Launch Chrome
+        WebDriver driver = new ChromeDriver();
 
         try {
+            // Open Google
             driver.get("https://www.google.com");
 
-            WebElement searchBox = driver.findElement(By.name("q")); //finding the google search box, q is the name
-            searchBox.sendKeys(" Selenium WebDriver"); //simulates typing the keys in the search box
-            searchBox.submit(); // simulates pressing "enter"
+            // Locate search box and enter query
+            WebElement searchBox = driver.findElement(By.name("q")); // q represents google search box
+            searchBox.sendKeys("Selenium WebDriver"); // simulates typing into search box
+            searchBox.submit(); // simulates pressing the enter button
 
-            Thread.sleep(5000); //ttl searcg results, 6seconds
+            // Wait until the title contains "Selenium WebDriver"
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60)); //wait 60s until condition is met
+            wait.until(ExpectedConditions.titleContains("Selenium WebDriver")); //condition to be met
 
+            // Get the page title after search
             String title = driver.getTitle();
-            if (title.contains("Selenium WebDriver")) {
+            System.out.println("Page Title: " + title); // Debugging step
+
+            // Verify if the title contains expected text
+            if (title.toLowerCase().contains("selenium webdriver")) {
                 System.out.println("Test Passed: Title contains the keyword.");
             } else {
                 System.out.println("Test Failed: Title does not contain the keyword.");
@@ -29,7 +39,7 @@ public class GoogleSearchTest {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            driver.quit(); //closes the browser
+            driver.quit(); // Close the browser
         }
     }
 }
